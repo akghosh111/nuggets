@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body, html {
+    overflow-x: hidden;
+}
+
+.bg-custom-dark {
+    @apply bg-[rgba(10,18,32,1)];
+  }
+/* styles.css */
+.navText {
+    @apply text-white;   /* Tailwind utility for text color */
+    font-family: 'Inter', sans-serif;  /* Custom font family */
+    font-weight: 400;  /* Custom font weight */
+    font-size: 15px;   /* Custom font size */
+    line-height: 100%; /* Line height */
+    letter-spacing: -5%; /* Adjust letter spacing */
+    vertical-align: middle; /* Vertical alignment */
+  }
+  .primary-bg {
+    @apply bg-[#6366f1];
+  }
+  
