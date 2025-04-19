@@ -15,8 +15,8 @@ body, html {
     font-family: 'Inter', sans-serif;  /* Custom font family */
     font-weight: 400;  /* Custom font weight */
     font-size: 15px;   /* Custom font size */
-    line-height: 100%; /* Line height */
-    letter-spacing: -5%; /* Adjust letter spacing */
+    line-height: 1.2;
+    letter-spacing: -0.5px;
     vertical-align: middle; /* Vertical alignment */
   }
   .primary-bg {

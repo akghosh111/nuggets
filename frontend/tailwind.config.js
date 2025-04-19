@@ -7,7 +7,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: '#6366f1', // Your custom purple
+        primary: '#6366f1', // custom purple
       },
     },
   },

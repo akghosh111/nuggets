@@ -17,7 +17,7 @@ export default function Navbar() {
   
   return (
     <nav className="bg-custom-dark navText text-white py-6 px-7">
-      <div className="container mx-auto flex justify-between items-center">
+      <div className="max-w-7xl w-full mx-auto flex justify-between items-center">
         {/* Left - Logo */}
         <div className="flex items-center">
           <span className="bg-yellow-500 text-black font-bold p-1 mr-2">N</span>
