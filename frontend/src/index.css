@@ -7,7 +7,7 @@ body, html {
 }
 
 .bg-custom-dark {
-    @apply bg-[rgba(10,18,32,1)];
+    @apply bg-[#0a1220];
   }
 /* styles.css */
 .navText {

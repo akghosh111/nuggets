@@ -6,6 +6,7 @@ import DailyNuggets from './pages/DailyNuggets'; // Other pages
 import HowItWorks from './pages/HowItWorks';
 import FAQs from './pages/FAQs';
 import GetStarted from './pages/GetStarted';
+import Footer from './components/Footer';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/faqs" element={<FAQs />} />
         <Route path="/get-started" element={<GetStarted />} />
       </Routes>
+      <Footer/>
     </>
   );
 }
