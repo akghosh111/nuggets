@@ -11,17 +11,17 @@ const HeroSection = () => {
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between relative z-10">
         {/* Text Content */}
         <div className="max-w-2xl mb-8 lg:mb-0 text-center lg:text-left">
-          <h1 className="text-3xl md:text-4xl lg:text-6xl font-bold mb-4">
+          <h1 className="headingText text-3xl md:text-4xl lg:text-6xl font-bold mb-4">
             Stay Smart, Read Less
           </h1>
-          <p className="text-lg md:text-xl mb-8 navText ">
+          <p className=" subtext text-lg md:text-xl mb-8 navText ">
             Nugget gives you bite-sized summaries of the day's top stories—
             tailored to your interests and powered by AI.
           </p>
           <div className="flex justify-center lg:justify-start">
             <button 
              onClick={() => navigate("/daily-nuggets")}
-            className="primary-bg hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-md flex items-center transition-colors">
+            className=" subtext text-[20px] primary-bg hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-md flex items-center transition-colors">
               Start Reading Smarter
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />

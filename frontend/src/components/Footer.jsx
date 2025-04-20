@@ -12,14 +12,14 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-6 md:mb-8 pb-6 md:pb-8 border-b border-gray-700">
           {/* About Section */}
           <div className="mb-6 md:mb-0">
-            <h3 className="text-lg md:text-xl font-bold mb-3 md:mb-4 flex items-center">
-              <span className="primary-bg w-2 h-6 mr-2 rounded"></span>
+            <h3 className="  floatingText text-lg md:text-xl font-bold mb-3 md:mb-4 flex items-center">
+              <span className=" primary-bg w-2 h-6 mr-2 rounded"></span>
               About Nugget
             </h3>
-            <p className="text-gray-300 text-sm md:text-base mb-3 md:mb-4">
+            <p className="ordtext text-gray-300 text-sm md:text-base mb-3 md:mb-4">
               Bite-sized news summaries powered by AI, designed to keep you informed without information overload.
             </p>
-            <p className="text-gray-300 text-sm md:text-base">
+            <p className="ordtext text-gray-300 text-sm md:text-base">
               Built with ❤️ during Hackathon 2025
             </p>
           </div>
@@ -41,20 +41,20 @@ const Footer = () => {
           
           {/* Subscribe Section */}
           <div className="md:col-start-3">
-            <h3 className="text-lg md:text-xl font-bold mb-3 md:mb-4 flex items-center">
+            <h3 className="  floatingText text-lg md:text-xl font-bold mb-3 md:mb-4 flex items-center">
               <span className="primary-bg w-2 h-6 mr-2 rounded"></span>
               Stay Updated
             </h3>
-            <p className="text-gray-300 text-sm md:text-base mb-3 md:mb-4">
+            <p className=" ordtext text-gray-300 text-sm md:text-base mb-3 md:mb-4">
               Subscribe to our newsletter for weekly news digest.
             </p>
             <div className="flex flex-col sm:flex-row">
               <input 
                 type="email" 
                 placeholder="Your email address" 
-                className="bg-gray-800 text-white p-2 md:p-3 rounded-t sm:rounded-t-none sm:rounded-l outline-none border-0 w-full mb-2 sm:mb-0"
+                className=" ordtext bg-gray-800 text-white p-2 md:p-3 rounded-t sm:rounded-t-none sm:rounded-l outline-none border-0 w-full mb-2 sm:mb-0"
               />
-              <button className="primary-bg hover:bg-indigo-700 text-white p-2 md:p-3 rounded-b sm:rounded-b-none sm:rounded-r transition-colors whitespace-nowrap">
+              <button className="ordtext primary-bg hover:bg-indigo-700 text-white p-2 md:p-3 rounded-b sm:rounded-b-none sm:rounded-r transition-colors whitespace-nowrap">
                 Subscribe
               </button>
             </div>
@@ -63,12 +63,12 @@ const Footer = () => {
         
         {/* Bottom Footer */}
         <div className="flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-400 text-sm md:text-base mb-4 md:mb-0 text-center md:text-left">
+          <p className=" ordtext text-gray-400 text-sm md:text-base mb-4 md:mb-0 text-center md:text-left">
             © {currentYear} Nugget News. All rights reserved.
           </p>
           
           {/* Social Media Links */}
-          <div className="flex space-x-4 justify-center md:justify-start">
+          <div className=" ordtext flex space-x-4 justify-center md:justify-start">
             <motion.a 
               href="https://github.com" 
               target="_blank" 

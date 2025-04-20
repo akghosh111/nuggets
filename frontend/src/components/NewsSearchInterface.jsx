@@ -63,7 +63,7 @@ const NewsSearchInterface = () => {
       <div className="mt-10 sm:mt-20 relative w-full max-w-xl mx-auto mb-6 sm:mb-8 px-2">
         <input
           type="text"
-          placeholder="Search today's nuggets... politics, space, AI, cricket — you name it..."
+          placeholder="Search today's nuggets... politics,AI, cricket — you name it..."
           className="w-full rounded-full py-2 px-4 pr-10 bg-white text-gray-800"
           value={searchQuery}
           onChange={handleSearch}
@@ -112,14 +112,14 @@ const NewsSearchInterface = () => {
                 <img 
                   src={item.image} 
                   alt={item.title}
-                  className="w-full h-40 sm:h-48 object-cover"
+                  className=" floatingText w-full h-40 sm:h-48 object-cover"
                 />
                 <div className="p-3 sm:p-4">
                   <span className="inline-block px-2 py-1 bg-indigo-600 text-xs rounded mb-2">
                     {item.category}
                   </span>
-                  <h3 className="text-base sm:text-lg font-medium mb-1 sm:mb-2">{item.title}</h3>
-                  <p className="text-gray-300 text-xs sm:text-sm">{item.content}</p>
+                  <h3 className=" floatingText text-base sm:text-lg font-medium mb-1 sm:mb-2">{item.title}</h3>
+                  <p className=" text-gray-300 text-xs sm:text-sm">{item.content}</p>
                 </div>
               </div>
             ))}

@@ -86,11 +86,11 @@ const Body = () => {
 
   return (
     <div className="bg-gray-100 py-10 md:py-20 px-4 md:px-6 text-center" ref={heroSectionRef}>
-      <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
+      <h1 className=" headingText text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
         Read from your <span className="bg-primary text-white px-2 py-1 rounded">favorite news portals</span>
       </h1>
 
-      <p className="text-sm md:text-base lg:text-lg mb-8 md:mb-12 max-w-2xl mx-auto leading-relaxed">
+      <p className="ordtext text-sm md:text-base lg:text-lg mb-8 md:mb-12 max-w-2xl mx-auto leading-relaxed">
         Select your interests from a variety of options available & stay updated in domain specific relevant news <span className="font-semibold">24×7</span> at your fingertips.
       </p>
 
@@ -110,7 +110,7 @@ const Body = () => {
             <motion.div
               key={index}
               whileHover={{ scale: 1.1 }}
-              className="inline-block mx-2 md:mx-4 px-3 md:px-6 py-2 md:py-3 bg-white border border-primary/30 rounded-md text-gray-800 cursor-pointer shadow-sm hover:shadow-md transition text-xs md:text-base"
+              className="floatingText inline-block mx-2 md:mx-4 px-3 md:px-6 py-2 md:py-3 bg-white border border-primary/30 rounded-md text-gray-800 cursor-pointer shadow-sm hover:shadow-md transition text-xs md:text-base"
             >
               {iconMap[topic]} {topic}
             </motion.div>
@@ -119,7 +119,7 @@ const Body = () => {
       </div>
 
       {/* Second row */}
-      <div className="overflow-hidden mb-8 md:mb-12">
+      <div className="floatingText overflow-hidden mb-8 md:mb-12">
         <motion.div
           className="flex whitespace-nowrap"
           animate={{ x: [animationDistance, 0] }}

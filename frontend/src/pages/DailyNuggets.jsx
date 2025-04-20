@@ -3,8 +3,9 @@ import NewsSearchInterface from '../components/NewsSearchInterface'
 
 const DailyNuggets = () => {
   return (
-    <div>
+    <div className='ordtext'>
       <NewsSearchInterface/>
+      
 
     </div>
   )

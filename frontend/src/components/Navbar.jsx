@@ -25,7 +25,7 @@ export default function Navbar() {
         </div>
 
         {/* Middle - Nav links (hidden on mobile) */}
-        <div className="hidden md:flex items-center space-x-8">
+        <div className="hidden  md:flex items-center space-x-8">
           {navLinks.map((link) => (
             <Link 
               key={link.path}
@@ -38,10 +38,10 @@ export default function Navbar() {
         </div>
 
         {/* Right - Get Started button (hidden on mobile) */}
-        <div className="hidden md:block">
+        <div className=" hidden md:block">
           <Link 
             to="/get-started"
-            className="primary-bg hover:bg-indigo-700 px-6 py-3 rounded-md font-medium text-white"
+            className="primary-bg  ordtext hover:bg-indigo-700 px-6 py-3 rounded-md font-medium text-white"
           >
             Get Started
           </Link>
