@@ -66,6 +66,7 @@ class ArticleResponse(BaseModel):
     summary: Optional[str] = None
     published: Optional[str] = None
     source: str
+    image_url: Optional[str] = None  # Added image URL field
 
 class ArticlesResponse(BaseModel):
     category: str
@@ -128,6 +129,46 @@ def clean_text(text: str) -> str:
     text = re.sub(r'\n+', ' ', text)
     text = re.sub(r'\s+', ' ', text).strip()
     return text
+
+def extract_image_url(entry: Any) -> Optional[str]:
+    """Extract image URL from a feed entry."""
+    try:
+        # Try to get image from media_content
+        if hasattr(entry, 'media_content') and entry.media_content:
+            for media in entry.media_content:
+                if 'url' in media:
+                    return media['url']
+        
+        # Try to get image from media_thumbnail
+        if hasattr(entry, 'media_thumbnail') and entry.media_thumbnail:
+            for media in entry.media_thumbnail:
+                if 'url' in media:
+                    return media['url']
+        
+        # Try to get image from enclosures
+        if hasattr(entry, 'enclosures') and entry.enclosures:
+            for enclosure in entry.enclosures:
+                if 'href' in enclosure and enclosure.get('type', '').startswith('image/'):
+                    return enclosure['href']
+        
+        # Try to extract image from content or description using regex
+        content_to_check = []
+        if hasattr(entry, 'content') and entry.content:
+            content_text = entry.content[0].value if isinstance(entry.content, list) else entry.content
+            content_to_check.append(content_text)
+        if hasattr(entry, 'description'):
+            content_to_check.append(entry.description)
+        
+        for text in content_to_check:
+            img_matches = re.findall(r'<img[^>]+src="([^">]+)"', text)
+            if img_matches:
+                return img_matches[0]
+        
+        # No image found
+        return None
+    except Exception as e:
+        logger.error(f"Error extracting image URL: {e}")
+        return None
 
 async def generate_title_and_summary(content: str) -> tuple[str, str]:
     """Generate both title and summary using Groq Llama API with caching."""
@@ -195,6 +236,27 @@ async def generate_title_and_summary(content: str) -> tuple[str, str]:
         logger.error(f"Error calling Groq API: {str(e)}")
         return "Error", f"Error generating content: {str(e)}"
 
+async def extract_image_with_newspaper3k(url: str) -> Optional[str]:
+    """Extract image URL from article using newspaper3k."""
+    cache_key = f"article_image:{url}"
+    
+    cached_image = await get_from_cache(cache_key)
+    if cached_image:
+        return cached_image.get("image_url")
+    
+    try:
+        article = Article(url)
+        article.download()
+        article.parse()
+        
+        if article.top_image:
+            await set_in_cache(cache_key, {"image_url": article.top_image})
+            return article.top_image
+        return None
+    except Exception as e:
+        logger.error(f"Error extracting image with newspaper3k from {url}: {e}")
+        return None
+
 async def process_rss_feed(feed_url: str, limit: int = 5) -> List[dict]:
     """Parse an RSS feed and extract articles with caching."""
  
@@ -211,11 +273,15 @@ async def process_rss_feed(feed_url: str, limit: int = 5) -> List[dict]:
         articles = []
         for entry in feed.entries[:limit]:
             if hasattr(entry, "link"):
+                # Extract image URL from RSS feed
+                image_url = extract_image_url(entry)
+                
                 article_dict = {
                     "original_title": entry.title if hasattr(entry, "title") else "No title",
                     "url": entry.link,
                     "published": entry.published if hasattr(entry, "published") else None,
-                    "source": source_name
+                    "source": source_name,
+                    "image_url": image_url  # Add image URL to article dict
                 }
                
                 if hasattr(entry, "content") and entry.content:
@@ -265,13 +331,20 @@ async def process_article(article_dict: dict) -> ArticleResponse:
         else:
             logger.warning(f"No content extracted for article: '{article_dict['original_title']}'")
         
+        # Try to get image from the article if not available in RSS
+        image_url = article_dict.get("image_url")
+        if not image_url:
+            image_url = await extract_image_with_newspaper3k(article_dict["url"])
+            logger.info(f"Using newspaper3k to extract image for article: {article_dict['original_title']}")
+        
         article_response = ArticleResponse(
             title=title,
             url=article_dict["url"],
             content=content,
             summary=summary,
             published=article_dict.get("published"),
-            source=article_dict["source"]
+            source=article_dict["source"],
+            image_url=image_url  # Include image URL in response
         )
         
         
@@ -287,7 +360,8 @@ async def process_article(article_dict: dict) -> ArticleResponse:
             content=None,
             summary=f"Error processing article: {str(e)}",
             published=article_dict.get("published"),
-            source=article_dict["source"]
+            source=article_dict["source"],
+            image_url=article_dict.get("image_url")  # Include image URL even in error case
         )
 
 @app.get("/fetch-articles/", response_model=ArticlesResponse)
