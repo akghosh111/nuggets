@@ -1,61 +1,104 @@
 import React, { useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
 
+const API_BASE_URL = 'http://localhost:8000'; // Base URL for all API calls
+
 const NewsSearchInterface = () => {
-  // Enhanced mock news data with image placeholders
-  const mockNews = [
-    { id: 1, title: "Global Climate Summit Results", category: "politics", image: "/api/placeholder/400/300", content: "World leaders agreed on new climate targets at the summit." },
-    { id: 2, title: "New AI Breakthrough Announced", category: "tech", image: "/api/placeholder/400/300", content: "Researchers reveal groundbreaking AI model with human-like reasoning." },
-    { id: 3, title: "SpaceX Launches New Satellite", category: "space", image: "/api/placeholder/400/300", content: "SpaceX successfully deployed its latest communication satellite into orbit." },
-    { id: 4, title: "Cricket World Cup Highlights", category: "sports", image: "/api/placeholder/400/300", content: "Stunning performances marked the latest World Cup matches." },
-    { id: 5, title: "Economic Forecast Released", category: "business", image: "/api/placeholder/400/300", content: "Analysts predict moderate growth in the coming quarter." },
-    { id: 6, title: "New Healthcare Policy Announced", category: "health", image: "/api/placeholder/400/300", content: "Government unveils comprehensive healthcare reform package." },
-    { id: 7, title: "Tech Giants Announce Merger", category: "tech", image: "/api/placeholder/400/300", content: "Industry shakeup as two major tech companies join forces." },
-    { id: 8, title: "International Film Festival Winners", category: "entertainment", image: "/api/placeholder/400/300", content: "Surprise winners at this year's prestigious film awards." },
-    { id: 9, title: "New Discovery in Quantum Physics", category: "science", image: "/api/placeholder/400/300", content: "Scientists report breakthrough that could revolutionize computing." }
-  ];
-
-  // Categories for filter buttons
-  const categories = [
-    "politics", "tech", "business", "sports", 
-    "health", "space", "science", "entertainment"
-  ];
-
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [filteredNews, setFilteredNews] = useState(mockNews);
+  const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [categories, setCategories] = useState([]);
 
-  // Improved filter function to handle case-insensitive search across title and content
+  // Fetch categories when component mounts
   useEffect(() => {
-    let results = mockNews;
-    
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      results = results.filter(item => 
-        item.title.toLowerCase().includes(query) || 
-        item.content.toLowerCase().includes(query) ||
-        item.category.toLowerCase().includes(query)
-      );
-    } else if (selectedCategory) {
-      results = results.filter(item => 
-        item.category === selectedCategory
-      );
-    }
-    
-    setFilteredNews(results);
-  }, [searchQuery, selectedCategory]);
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/categories/`, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+          },
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('Categories fetched:', data); // Debug log
+        
+        if (data.categories && data.categories.length > 0) {
+          setCategories(data.categories);
+          // Automatically select the first category to show initial content
+          setSelectedCategory(data.categories[0]);
+        }
+      } catch (err) {
+        console.error('Error fetching categories:', err);
+        setError(`Failed to fetch categories: ${err.message}`);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  // Fetch articles based on category
+  useEffect(() => {
+    const fetchArticles = async () => {
+      if (!selectedCategory) return;
+      
+      setLoading(true);
+      setError(null);
+      
+      try {
+        const response = await fetch(`${API_BASE_URL}/fetch-articles/?category=${selectedCategory}&limit=5`, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Articles fetched:', data); // Debug log
+        
+        if (data.articles) {
+          setArticles(data.articles);
+        }
+      } catch (err) {
+        console.error('Error fetching articles:', err);
+        setError(`Failed to fetch articles: ${err.message}`);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchArticles();
+  }, [selectedCategory]);
 
   // Handle search input
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
-    setSelectedCategory(""); // Clear category selection when searching
   };
 
   // Handle category selection
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
-    setSearchQuery(""); // Clear search when selecting category
+    setSearchQuery('');
   };
+
+  // Filter articles based on search query
+  const filteredArticles = searchQuery
+    ? articles.filter(item =>
+        item.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.summary?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.content?.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : articles;
 
   return (
     <div className="bg-gray-900 min-h-screen text-white p-4">
@@ -63,7 +106,7 @@ const NewsSearchInterface = () => {
       <div className="mt-10 sm:mt-20 relative w-full max-w-xl mx-auto mb-6 sm:mb-8 px-2">
         <input
           type="text"
-          placeholder="Search today's nuggets... politics,AI, cricket — you name it..."
+          placeholder="Search today's nuggets... politics, AI, cricket — you name it..."
           className="w-full rounded-full py-2 px-4 pr-10 bg-white text-gray-800"
           value={searchQuery}
           onChange={handleSearch}
@@ -95,7 +138,7 @@ const NewsSearchInterface = () => {
         </div>
       </div>
 
-      {/* Featured News Section */}
+      {/* News Section */}
       <div>
         <h2 className="mt-10 sm:mt-20 mb-6 sm:mb-10 text-xl sm:text-2xl text-center">
           {searchQuery 
@@ -105,33 +148,69 @@ const NewsSearchInterface = () => {
               : "Featured Today"}
         </h2>
         
-        {filteredNews.length > 0 ? (
+        {loading && (
+          <div className="text-center py-10">
+            <p className="text-xl text-gray-400">Loading...</p>
+          </div>
+        )}
+
+        {error && (
+          <div className="text-center py-10">
+            <p className="text-xl text-red-400">{error}</p>
+          </div>
+        )}
+
+        {!loading && !error && filteredArticles.length > 0 ? (
           <div className="mb-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-6xl mx-auto px-2">
-            {filteredNews.map((item) => (
-              <div key={item.id} className="bg-gray-700 rounded-md overflow-hidden shadow-lg">
+            {filteredArticles.map((article, index) => (
+              <div key={index} className="bg-gray-700 rounded-md overflow-hidden shadow-lg">
                 <img 
-                  src={item.image} 
-                  alt={item.title}
-                  className=" floatingText w-full h-40 sm:h-48 object-cover"
+                  src={article.image_url || "/api/placeholder/400/300"}
+                  alt={article.title}
+                  className="floatingText w-full h-40 sm:h-48 object-cover"
+                  onError={(e) => {
+                    e.target.src = "/api/placeholder/400/300";
+                    e.target.onerror = null; // Prevent infinite loop
+                  }}
                 />
                 <div className="p-3 sm:p-4">
-                  <span className="inline-block px-2 py-1 bg-indigo-600 text-xs rounded mb-2">
-                    {item.category}
-                  </span>
-                  <h3 className=" floatingText text-base sm:text-lg font-medium mb-1 sm:mb-2">{item.title}</h3>
-                  <p className=" text-gray-300 text-xs sm:text-sm">{item.content}</p>
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="inline-block px-2 py-1 bg-indigo-600 text-xs rounded">
+                      {article.source}
+                    </span>
+                    {article.published && (
+                      <span className="text-xs text-gray-400">
+                        {new Date(article.published).toLocaleDateString()}
+                      </span>
+                    )}
+                  </div>
+                  <h3 className="floatingText text-base sm:text-lg font-medium mb-1 sm:mb-2">
+                    <a 
+                      href={article.url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="hover:text-indigo-400"
+                    >
+                      {article.title}
+                    </a>
+                  </h3>
+                  <p className="text-gray-300 text-xs sm:text-sm">
+                    {article.summary || article.content || "No summary available"}
+                  </p>
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <div className="text-center py-10">
-            <p className="text-xl text-gray-400">No results found</p>
-          </div>
+          !loading && !error && (
+            <div className="text-center py-10">
+              <p className="text-xl text-gray-400">No results found</p>
+            </div>
+          )
         )}
       </div>
     </div>
   );
-}
+};
 
 export default NewsSearchInterface;

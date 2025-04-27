@@ -12,6 +12,7 @@ import httpx
 import logging
 from dotenv import load_dotenv
 import redis.asyncio as redis
+from fastapi.middleware.cors import CORSMiddleware
 
 
 load_dotenv()
@@ -476,6 +477,15 @@ async def shutdown_event():
         logger.info("Redis connection closed")
     except Exception as e:
         logger.error(f"Error closing Redis connection: {e}")
+
+# Add this right after creating the FastAPI app (after app = FastAPI(...))
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],  # Updated to match your frontend port
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 if __name__ == "__main__":
     import uvicorn
