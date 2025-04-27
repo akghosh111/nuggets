@@ -31,7 +31,7 @@ if not GROQ_API_KEY:
 
 
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379")
-redis_client = redis.from_url(REDIS_URL)
+redis_client = redis.from_url(REDIS_URL, ssl=True)
 
 CACHE_EXPIRATION = int(os.getenv("CACHE_EXPIRATION", 3600))
 
@@ -489,4 +489,4 @@ app.add_middleware(
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=10000, reload=True)
